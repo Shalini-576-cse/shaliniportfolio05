@@ -1,84 +1,262 @@
-// Typing Effect
-const text = "Full Stack Developer | Building Modern Web Apps";
-let i = 0;
-
-function typeWriter() {
-  if (i < text.length) {
-    document.querySelector(".hero-content p").innerHTML += text.charAt(i);
-    i++;
-    setTimeout(typeWriter, 60);
+const FALLBACK_PROJECTS = [
+  {
+    title: "Portfolio Website",
+    description: "A responsive personal portfolio with a Node.js backend and contact form.",
+    tech: "HTML, CSS, JavaScript, Node.js, Express, MongoDB",
+    link: ""
   }
+];
+let portfolioInitialized = false;
+
+function initPortfolio() {
+  if (portfolioInitialized) {
+    return;
+  }
+
+  portfolioInitialized = true;
+  startTypingEffect();
+  setupScrollReveal();
+  setupContactForm();
+  loadProjects();
 }
 
-document.querySelector(".hero-content p").innerHTML = "";
-typeWriter();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initPortfolio);
+} else {
+  initPortfolio();
+}
 
+function startTypingEffect() {
+  const heroSubtitle = document.querySelector(".hero-content p");
+  const text = "Full Stack Developer | Building Modern Web Apps";
+  let index = 0;
 
-// Scroll Reveal Animation
-const cards = document.querySelectorAll(".card");
+  if (!heroSubtitle) {
+    return;
+  }
 
-window.addEventListener("scroll", () => {
+  heroSubtitle.textContent = "";
+
+  function typeNextCharacter() {
+    if (index >= text.length) {
+      return;
+    }
+
+    heroSubtitle.textContent += text.charAt(index);
+    index += 1;
+    window.setTimeout(typeNextCharacter, 60);
+  }
+
+  typeNextCharacter();
+}
+
+function setupScrollReveal() {
+  const cards = document.querySelectorAll(".card");
+
   cards.forEach(card => {
-    const top = card.getBoundingClientRect().top;
-    const trigger = window.innerHeight - 100;
+    card.classList.add("reveal-card");
+  });
 
-    if (top < trigger) {
-      card.style.opacity = "1";
-      card.style.transform = "translateY(0)";
+  if (!("IntersectionObserver" in window)) {
+    cards.forEach(card => card.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15
+  });
+
+  cards.forEach(card => observer.observe(card));
+}
+
+function setupContactForm() {
+  const form = document.getElementById("contactForm");
+  const submitButton = form?.querySelector("button");
+
+  if (!form || !submitButton) {
+    return;
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {
+      name: String(formData.get("name") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      message: String(formData.get("message") || "").trim()
+    };
+
+    const validationMessage = validateContactData(data);
+
+    if (validationMessage) {
+      setStatus(validationMessage, "error");
+      return;
+    }
+
+    setStatus("Sending...", "info");
+    submitButton.disabled = true;
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+      const result = await parseJsonResponse(response);
+
+      if (response.ok && result.success) {
+        setStatus("Message sent successfully!", "success");
+        form.reset();
+      } else {
+        setStatus(result.message || "Failed to send message.", "error");
+      }
+    } catch (error) {
+      setStatus("Unable to send message right now.", "error");
+    } finally {
+      submitButton.disabled = false;
     }
   });
-});
-
-cards.forEach(card => {
-  card.style.opacity = "0";
-  card.style.transform = "translateY(40px)";
-  card.style.transition = "0.8s ease";
-});
-// Contact Form Submit
-document.getElementById("contactForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-
-  const data = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    message: document.getElementById("message").value
-  };
-
-  const res = await fetch("/api/contact", {
-    method: "POST",
-    headers: {
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify(data)
-  });
-
-  const result = await res.json();
-
-  if(result.success){
-    document.getElementById("status").innerText = "✅ Message sent successfully!";
-    document.getElementById("contactForm").reset();
-  } else {
-    document.getElementById("status").innerText = "❌ Failed to send message.";
-  }
-});
-// Load Projects Dynamically
-async function loadProjects() {
-  const res = await fetch("/api/projects");
-  const projects = await res.json();
-
-  const container = document.getElementById("projectsContainer");
-  container.innerHTML = "";
-
-  projects.forEach(project => {
-    container.innerHTML += `
-      <div class="project-box">
-        <h3>${project.title}</h3>
-        <p>${project.description}</p>
-        <p><strong>Tech:</strong> ${project.tech}</p>
-        <a href="${project.link}" target="_blank">View Project</a>
-      </div>
-    `;
-  });
 }
 
-loadProjects();
+function validateContactData(data) {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!data.name || !data.email || !data.message) {
+    return "Please fill in all fields.";
+  }
+
+  if (data.name.length > 80 || data.email.length > 120 || data.message.length > 1000) {
+    return "Please shorten your contact details.";
+  }
+
+  if (!emailPattern.test(data.email)) {
+    return "Please enter a valid email address.";
+  }
+
+  return "";
+}
+
+async function loadProjects() {
+  const container = document.getElementById("projectsContainer");
+
+  if (!container) {
+    return;
+  }
+
+  renderProjectsMessage(container, "Loading projects...");
+
+  try {
+    const response = await fetch("/api/projects");
+    const projects = await parseJsonResponse(response);
+
+    if (!response.ok || !Array.isArray(projects)) {
+      throw new Error("Failed to load projects");
+    }
+
+    renderProjects(container, projects.length ? projects : FALLBACK_PROJECTS);
+  } catch (error) {
+    renderProjectsMessage(container, "Showing featured projects while live projects load.");
+    renderProjects(container, FALLBACK_PROJECTS);
+  }
+}
+
+async function parseJsonResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (!contentType.includes("application/json")) {
+    return {};
+  }
+
+  return response.json();
+}
+
+function renderProjects(container, projects) {
+  const projectCards = projects
+    .filter(project => project && typeof project === "object")
+    .map(createProjectCard);
+
+  if (!projectCards.length) {
+    renderProjects(container, FALLBACK_PROJECTS);
+    return;
+  }
+
+  container.replaceChildren(...projectCards);
+}
+
+function renderProjectsMessage(container, message) {
+  const status = document.createElement("p");
+  status.className = "projects-status";
+  status.textContent = message;
+  container.replaceChildren(status);
+}
+
+function setStatus(message, type) {
+  const status = document.getElementById("status");
+
+  if (!status) {
+    return;
+  }
+
+  status.textContent = message;
+  status.className = `status ${type}`;
+}
+
+function createProjectCard(project) {
+  const projectBox = document.createElement("div");
+  const title = document.createElement("h3");
+  const description = document.createElement("p");
+  const tech = document.createElement("p");
+  const techLabel = document.createElement("strong");
+  const titleText = getCleanText(project.title, "Untitled Project");
+  const descriptionText = getCleanText(project.description, "Project details coming soon.");
+  const techText = getCleanText(project.tech, "Not specified");
+
+  projectBox.className = "project-box";
+  title.textContent = titleText;
+  description.textContent = descriptionText;
+  techLabel.textContent = "Tech:";
+  tech.append(techLabel, ` ${techText}`);
+
+  projectBox.append(title, description, tech);
+
+  if (isSafeProjectLink(project.link)) {
+    const link = document.createElement("a");
+    link.href = project.link;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "View Project";
+    projectBox.appendChild(link);
+  }
+
+  return projectBox;
+}
+
+function getCleanText(value, fallback) {
+  const text = typeof value === "string" ? value.trim() : "";
+  return text || fallback;
+}
+
+function isSafeProjectLink(link) {
+  const trimmedLink = typeof link === "string" ? link.trim() : "";
+
+  if (!trimmedLink || trimmedLink === "#") {
+    return false;
+  }
+
+  try {
+    const url = new URL(trimmedLink);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch (error) {
+    return false;
+  }
+}

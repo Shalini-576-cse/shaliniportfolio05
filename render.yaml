@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: shalini-portfolio
+    env: node
+    plan: free
+    buildCommand: cd backend && npm ci --omit=dev
+    startCommand: cd backend && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        sync: false
