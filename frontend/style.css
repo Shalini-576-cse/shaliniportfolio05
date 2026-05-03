@@ -1,0 +1,297 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, sans-serif;
+  background:#f8f9fc;
+  color:#222;
+  scroll-behavior:smooth;
+}
+
+/* Navbar + Hero */
+.hero{
+  min-height:100vh;
+  background:linear-gradient(135deg,#ffffff,#e9f0ff);
+  padding:30px 8%;
+}
+
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+nav h2{
+  font-size:28px;
+  font-weight:bold;
+}
+
+nav ul{
+  display:flex;
+  list-style:none;
+  gap:25px;
+}
+
+nav a{
+  text-decoration:none;
+  color:#222;
+  font-weight:600;
+}
+
+.hero-content{
+  text-align:center;
+  margin-top:140px;
+}
+
+.hero-content h1{
+  font-size:56px;
+  margin-bottom:15px;
+}
+
+.hero-content p{
+  font-size:22px;
+  color:#555;
+  margin-bottom:30px;
+}
+
+.btn{
+  display:inline-block;
+  padding:14px 28px;
+  background:#111;
+  color:white;
+  border-radius:30px;
+  text-decoration:none;
+  transition:0.3s;
+}
+
+.btn:hover{
+  transform:translateY(-3px);
+}
+
+/* Sections */
+.card{
+  background:white;
+  margin:40px auto;
+  width:85%;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.card h2{
+  margin-bottom:20px;
+  font-size:32px;
+}
+
+.skills-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:15px;
+}
+
+.skills-grid span{
+  background:#eef2ff;
+  padding:12px;
+  text-align:center;
+  border-radius:12px;
+  font-weight:600;
+}
+
+.project-box{
+  background:#f5f7ff;
+  padding:25px;
+  border-radius:16px;
+}
+
+form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+input,textarea{
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:16px;
+}
+
+button{
+  padding:14px;
+  border:none;
+  background:#111;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+footer{
+  text-align:center;
+  padding:30px;
+  color:#666;
+}
+
+/* Mobile */
+@media(max-width:768px){
+  nav{
+    flex-direction:column;
+    gap:15px;
+  }
+
+  nav ul{
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .hero-content h1{
+    font-size:38px;
+  }
+
+  .hero-content p{
+    font-size:18px;
+  }
+}
+/* Premium Hover Effects */
+.card{
+  transition:0.35s ease;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 20px 45px rgba(0,0,0,0.12);
+}
+
+.skills-grid span{
+  transition:0.3s ease;
+}
+
+.skills-grid span:hover{
+  transform:scale(1.05);
+}
+
+.project-box{
+  transition:0.3s ease;
+}
+
+.project-box:hover{
+  transform:translateY(-6px);
+}
+.project-box{
+  background:#f5f7ff;
+  padding:25px;
+  border-radius:16px;
+  margin-top:20px;
+}
+
+.project-box a{
+  display:inline-block;
+  margin-top:10px;
+  color:#111;
+  font-weight:bold;
+  text-decoration:none;
+}
+.secondary{
+  background:white;
+  color:#111;
+  border:2px solid #111;
+  margin-left:12px;
+}
+
+.secondary:hover{
+  background:#111;
+  color:white;
+}
+.hero-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:80vh;
+  gap:50px;
+}
+
+.hero-left{
+  flex:1;
+}
+
+.hero-left h1{
+  font-size:64px;
+}
+
+.hero-left p{
+  font-size:24px;
+  margin:20px 0;
+}
+
+.hero-right{
+  flex:1;
+  text-align:center;
+}
+
+.hero-right img{
+  width:90%;
+  max-width:500px;
+  animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-15px);}
+  100%{transform:translateY(0);}
+}
+
+@media(max-width:900px){
+.hero-container{
+flex-direction:column;
+text-align:center;
+}
+
+.hero-left h1{
+font-size:46px;
+}
+}
+.hero{
+  position:relative;
+  min-height:100vh;
+  overflow:hidden;
+}
+
+/* LEFT IMAGE */
+.side-left{
+  position:absolute;
+  left:40px;
+  top:80px;
+}
+
+.side-left img{
+  width:400px;
+  animation:float 10s ease-in-out infinite;
+}
+
+/* RIGHT IMAGE */
+.side-right{
+  position:absolute;
+  right:40px;
+  top:80px;
+}
+
+.side-right img{
+  width:400px;
+  animation:float 10s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-12px);}
+  100%{transform:translateY(0);}
+}
+
+/* Mobile */
+@media(max-width:900px){
+.side-left,
+.side-right{
+display:none;
+}
+}
