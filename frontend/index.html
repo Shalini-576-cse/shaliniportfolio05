@@ -1,92 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Chimala Shalini portfolio website for full-stack web development projects, skills, and contact.">
-<title>Shalini Portfolio</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chimala Shalini | MERN Stack Developer</title>
+
+    <meta name="description"
+        content="Chimala Shalini - MERN Stack Developer Portfolio showcasing projects, skills, resume, and contact information.">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="right.png">
 </head>
+
 <body>
 
-<header class="hero">
-  <nav>
-    <h2>Chimala Shalini</h2>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
+    <!-- ================= HERO SECTION ================= -->
 
-  <div class="hero-content">
-    <div class="side-left">
-      <img src="left.png" alt="Professional Working">
-    </div>
-    <h1>Hello, I'm Shalini</h1>
-    <p>Full Stack Developer | Building Modern Web Apps</p>
-    <a href="#projects" class="btn">View My Work</a>
-    <a href="resume.pdf" target="_blank" class="btn secondary">View Resume</a>
-    <a href="resume.pdf" class="btn secondary" download>Download Resume</a>
-    <div class="side-right">
-      <img src="right.png" alt="Professional Working">
-    </div>
-  </div>
-</header>
+    <header class="hero">
 
-<section id="about" class="card">
-<h2>About Me</h2>
-<p>Final-year Computer Science Engineering student and MERN stack developer with hands-on experience building and deploying scalable web applications using MongoDB, Express.js, React.js, and Node.js. Skilled in JavaScript, RESTful API development, JWT-based authentication, database design, and mobile-friendly UI development. Worked in an Agile team, participating in sprint planning and daily stand-ups during an internship. Experienced with Git, GitHub, Postman, and deployment platforms including Vercel and Render. Strong problem-solving mindset with a proven ability to write clean, reusable code and quickly learn new technologies in a collaborative environment.
-</p>
-</section>
+        <nav>
 
-<section id="skills" class="card">
-<h2>Skills</h2>
-<div class="skills-grid">
-<span>HTML</span>
-<span>CSS</span>
-<span>JavaScript</span>
-<span>React</span>
-<span>Node.js</span>
-<span>MongoDB</span>
-<span>Product Management</span>
-<span>UI/UX Design</span>
-<span>Web Development</span>
-<span>Strong Communication</span>
-<span>Leadership Quality</span>
-<span>Time Management</span>
-<span>Frontend: React.js, React Hooks, Context API, JavaScript (ES6+), HTML5, CSS3, Bootstrap, Tailwind CSS, Responsive Web Design
-</span>
-</div>
-</section>
+            <h2>Chimala Shalini</h2>
 
-<section id="projects" class="card">
-  <h2>Projects</h2>
-  <div id="projectsContainer"></div>
-</section>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
 
-<section id="contact" class="card">
-<h2>Contact Me</h2>
+        </nav>
 
-<form id="contactForm">
-  <label for="name">Your Name</label>
-  <input type="text" id="name" name="name" placeholder="Your Name" maxlength="80" autocomplete="name" required>
+        <div class="hero-content">
 
-  <label for="email">Your Email</label>
-  <input type="email" id="email" name="email" placeholder="Your Email" maxlength="120" autocomplete="email" required>
+            <div class="side-left">
+                <img src="left.png" alt="Developer Illustration">
+            </div>
 
-  <label for="message">Your Message</label>
-  <textarea id="message" name="message" placeholder="Your Message" maxlength="1000" required></textarea>
-  <button type="submit">Send Message</button>
-</form>
+            <div class="hero-text">
 
-<p id="status" role="status" aria-live="polite"></p>
-</section>
+                <h1>Hello, I'm <span class="highlight">Chimala Shalini</span></h1>
 
-<footer>
-<p>© 2026 Shalini Portfolio</p>
-</footer>
-<script src="script.js" defer></script>
+                <h3>Software Engineer | MERN Stack Developer</h3>
+
+                <p>
+                    Passionate Full Stack MERN Developer building scalable,
+                    responsive and modern web applications with clean code,
+                    attractive UI and real-world solutions.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#projects" class="btn secondary">
+                        View My Work
+                    </a>
+
+                    <a href="resume.pdf" target="_blank" class="btn secondary">
+                        View Resume
+                    </a>
+
+                    <a href="resume.pdf" download class="btn secondary">
+                        Download Resume
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="side-right">
+                <img src="right.png" alt="Working Developer">
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- ================= ABOUT ================= -->
+
+    <section id="about" class="card">
+
+        <h2>About Me</h2>
+
+        <p>
+
+            I am a passionate Full Stack MERN Developer and final-year Computer Science Engineering student with
+            hands-on experience developing full-stack web applications using React.js, Node.js, Express.js and MongoDB.
+            I enjoy solving real-world problems, learning modern technologies and creating responsive user experiences.
+
+        </p>
+
+        <div class="about-grid">
+
+            <div class="info-box">
+                <h3>Education</h3>
+                <p>B.Tech - Computer Science Engineering</p>
+                <p>Narsimha Reddy Engineering College</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Internship</h3>
+                <p>Full Stack Web Developer Intern</p>
+                <p>Thiranex (Remote)</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Location</h3>
+                <p>Hyderabad</p>
+                <p>Telangana, India</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Open To</h3>
+                <p>Software Engineer</p>
+                <p>Full Stack Developer Roles</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= SKILLS ================= -->
+
+    <section id="skills" class="card">
+
+        <h2>Technical Skills</h2>
+
+        <div class="skills-grid">
+
+            <span>HTML5</span>
+            <span>CSS3</span>
+            <span>JavaScript</span>
+            <span>React.js</span>
+            <span>Node.js</span>
+            <span>Express.js</span>
+            <span>MongoDB</span>
+            <span>Mongoose</span>
+            <span>REST APIs</span>
+            <span>JWT Authentication</span>
+            <span>Bootstrap</span>
+            <span>Tailwind CSS</span>
+            <span>Python</span>
+            <span>SQL</span>
+            <span>Git</span>
+            <span>GitHub</span>
+            <span>Postman</span>
+            <span>Docker</span>
+            <span>Render</span>
+            <span>Vercel</span>
+
+        </div>
+
+    </section>
+
+    <!-- ================= PROJECTS ================= -->
+
+    <section id="projects" class="card">
+
+        <h2>Featured Projects</h2>
+
+        <div class="projects-grid">
+
+            <div class="project-card">
+
+                <h3 >FocusFlow - Task Management App</h3>
+                <p>
+
+                    A full-stack MERN application featuring authentication,
+                    CRUD operations, task prioritization, responsive dashboard,
+                    and RESTful API integration.
+
+                </p>
+
+                <h4>Tech Stack</h4>
+
+                <p>
+                    React.js • Node.js • Express.js • MongoDB • JWT
+                </p>
+
+                <a href="https://github.com/Shalini-576-cse"
+                    target="_blank"
+                    class="project-btn">
+
+                    View Project
+
+                </a>
+
+            </div>
+
+            <div class="project-card">
+
+                <h3>Blog Platform</h3>
+
+                <p>
+
+                    A MERN Stack blogging platform supporting user
+                    authentication, post creation, editing, comments,
+                    and responsive design.
+
+                </p>
+
+                <h4>Tech Stack</h4>
+
+                <p>
+
+                    React.js • Node.js • Express.js • MongoDB
+
+                </p>
+
+                <a href="https://github.com/Shalini-576-cse"
+                    target="_blank"
+                    class="project-btn">
+
+                    View Project
+
+                </a>
+
+            </div>
+
+            <div class="project-card">
+
+                <h3>Email Spam Detection</h3>
+
+                <p>
+
+                    Machine Learning application that classifies emails
+                    into spam or non-spam using feature extraction,
+                    preprocessing and predictive models.
+
+                </p>
+
+                <h4>Tech Stack</h4>
+
+                <p>
+
+                    Python • Machine Learning • Scikit-Learn
+
+                </p>
+
+                <a href="https://github.com/Shalini-576-cse"
+                    target="_blank"
+                    class="project-btn">
+
+                    View Project
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+
+    <section id="contact" class="card">
+
+        <h2>Get In Touch</h2>
+
+        <p>
+
+            Interested in collaborating or hiring me?
+            Feel free to send a message.
+
+        </p>
+
+        <form id="contactForm">
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Your Name"
+                required>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Your Email"
+                required>
+
+            <textarea
+                id="message"
+                name="message"
+                placeholder="Write your message..."
+                required></textarea>
+
+            <button type="submit">
+
+                Send Message
+
+            </button>
+
+        </form>
+
+        <p id="status"></p>
+
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <h2>Chimala Shalini</h2>
+
+        <p>
+
+            Building modern, scalable web applications using the MERN Stack.
+
+        </p>
+
+        <div class="social-links">
+
+            <a href="https://github.com/Shalini-576-cse" target="_blank">
+
+                GitHub
+
+            </a>
+
+            <a href="https://www.linkedin.com/in/shalini76" target="_blank">
+
+                LinkedIn
+
+            </a>
+
+            <a href="mailto:chimalashalini@gmail.com">
+
+                Email
+
+            </a>
+
+        </div>
+
+        <p class="copyright">
+
+            © 2026 Chimala Shalini. All Rights Reserved.
+
+        </p>
+
+    </footer>
+
+    <script src="script.js"></script>
+
 </body>
+
 </html>
