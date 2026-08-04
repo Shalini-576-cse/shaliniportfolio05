@@ -29,6 +29,8 @@ body{
     padding:30px 8%;
     position:relative;
     overflow:hidden;
+    display:flex;
+    flex-direction:column;
 }
 
 nav{
@@ -58,18 +60,16 @@ nav a{
 nav a:hover{
     color:#555;
 }
-
 .hero-content{
     position:relative;
     display:flex;
     justify-content:center;
     align-items:center;
+    text-align:center;
     max-width:900px;
-    margin:100px auto 0;
+    margin:120px auto 0;
     z-index:2;
-    padding:0 60px;
 }
-
 .hero-content h1{
     font-size:58px;
     margin-bottom:15px;
@@ -113,47 +113,31 @@ nav a:hover{
 }
 
 /* =========================
-   FLOATING IMAGES
+   HERO IMAGES (FIXED)
 ========================= */
 
 .side-left,
 .side-right{
     position:absolute;
     z-index:0;
-    opacity:.9;
+    opacity:1;
 }
 
 .side-left{
-    left:-220px;
-    top:-60px;
+    left:-200px;
+    top:80px;
 }
 
 .side-right{
-    right:-220px;
-    top:-60px;
+    right:-200px;
+    top:90px;
 }
 
 .side-left img,
 .side-right img{
-    width:min(34vw,420px);
-    min-width:260px;
-    animation:float 8s ease-in-out infinite;
-}
-
-@keyframes float{
-
-0%{
-transform:translateY(0);
-}
-
-50%{
-transform:translateY(-12px);
-}
-
-100%{
-transform:translateY(0);
-}
-
+    width:320px;
+    height:auto;
+    display:block;
 }
 
 /* =========================
