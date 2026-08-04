@@ -6,144 +6,143 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
-  .split(",")
-  .map(normalizeOrigin)
-  .filter(Boolean);
 
-function normalizeOrigin(origin) {
-  if (!origin) {
-    return "";
-  }
+// Allowed frontend URLs
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://shalini-portfolio-ux5x.onrender.com"
+];
 
-  try {
-    return new URL(origin).origin;
-  } catch (error) {
-    return origin.trim().replace(/\/$/, "");
-  }
-}
-
-function getRequestOrigin(req) {
-  return `${req.protocol}://${req.get("host")}`;
-}
-
-function isAllowedOrigin(req) {
-  const origin = normalizeOrigin(req.header("Origin"));
-
-  if (!origin) {
-    return true;
-  }
-
-  return origin === getRequestOrigin(req) || allowedOrigins.includes(origin);
-}
-
+// Security headers
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
-mongoose.set("sanitizeFilter", true);
 
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()"
+  );
+
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https://shalini-portfolio-ux5x.onrender.com https://shalini-portfolio-a2i6.onrender.com; object-src 'none'; base-uri 'self'; form-action 'self'"
   );
-  next();
-});
-
-app.use("/api", (req, res, next) => {
-  if (!isAllowedOrigin(req)) {
-    return res.status(403).json({ success: false, message: "Origin not allowed." });
-  }
 
   next();
 });
 
-app.use(cors((req, callback) => {
-  callback(null, {
-    origin: isAllowedOrigin(req),
-    optionsSuccessStatus: 204
-  });
-}));
+// CORS
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST"],
+    optionsSuccessStatus: 200
+  })
+);
+
 app.use(express.json({ limit: "20kb" }));
 
-// MongoDB connection
+// MongoDB
 if (process.env.MONGO_URI) {
-  mongoose.connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000
-  })
-    .then(() => console.log("MongoDB connected"))
-    .catch(err => console.error("MongoDB connection error:", err.message));
+  mongoose
+    .connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 10000
+    })
+    .then(() => console.log("MongoDB Connected"))
+    .catch(err => console.error(err.message));
 } else {
-  console.warn("MONGO_URI is not set. Database-backed API routes will return 503.");
+  console.warn("MONGO_URI not found");
 }
 
 mongoose.connection.on("error", err => {
-  console.error("MongoDB runtime error:", err.message);
+  console.error(err.message);
 });
 
-// Serve frontend files
-app.use(express.static(path.join(__dirname, "../frontend"), {
-  etag: true,
-  maxAge: "1h",
-  setHeaders(res, filePath) {
-    if (filePath.endsWith("index.html")) {
-      res.setHeader("Cache-Control", "no-store");
+// Static frontend
+app.use(
+  express.static(path.join(__dirname, "../frontend"), {
+    etag: true,
+    maxAge: "1h",
+    setHeaders(res, filePath) {
+      if (filePath.endsWith("index.html")) {
+        res.setHeader("Cache-Control", "no-store");
+      }
     }
-  }
-}));
+  })
+);
 
-// Home page
+// Home
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
+// Health check
 app.get("/health", (req, res) => {
-  res.setHeader("Cache-Control", "no-store");
   res.json({
     ok: true,
-    database: mongoose.connection.readyState === 1 ? "connected" : "unavailable"
+    database:
+      mongoose.connection.readyState === 1
+        ? "connected"
+        : "disconnected"
   });
 });
 
-// API routes
+// Routes
 app.use("/api/contact", require("./routes/contact"));
 app.use("/api/projects", require("./routes/projects"));
 
+// 404
 app.use("/api", (req, res) => {
-  res.status(404).json({ success: false, message: "API route not found." });
+  res.status(404).json({
+    success: false,
+    message: "API route not found."
+  });
 });
 
+// Error handler
 app.use((err, req, res, next) => {
+  console.error(err);
+
   if (err instanceof SyntaxError && "body" in err) {
-    return res.status(400).json({ success: false, message: "Invalid JSON body." });
+    return res.status(400).json({
+      success: false,
+      message: "Invalid JSON body."
+    });
   }
 
-  console.error(err.message);
-  res.status(500).json({ success: false, message: "Server error." });
+  res.status(500).json({
+    success: false,
+    message: err.message || "Server Error"
+  });
 });
 
+// Start server
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+// Graceful shutdown
 function shutdown() {
-  console.log("Shutting down server...");
-
-  const forceExit = setTimeout(() => {
-    console.error("Forced shutdown after timeout.");
-    process.exit(1);
-  }, 10000);
+  console.log("Shutting down...");
 
   server.close(() => {
     mongoose.connection.close(false).finally(() => {
-      clearTimeout(forceExit);
       process.exit(0);
     });
   });
 }
 
-process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
