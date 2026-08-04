@@ -1,19 +1,36 @@
+const API_URL = "https://shalini-portfolio-a2i6.onrender.com";
+
 const FALLBACK_PROJECTS = [
   {
-    title: "Portfolio Website",
-    description: "A responsive personal portfolio with a Node.js backend and contact form.",
-    tech: "HTML, CSS, JavaScript, Node.js, Express, MongoDB",
-    link: ""
+    title: "FocusFlow - Task Management App",
+    description:
+      "A full-stack MERN application with JWT authentication, CRUD operations, responsive dashboard, and RESTful API integration.",
+    tech: "React.js, Node.js, Express.js, MongoDB, JWT",
+    link: "https://github.com/Shalini-576-cse"
+  },
+  {
+    title: "Blog Platform",
+    description:
+      "A MERN Stack blogging platform with secure authentication, post management, comments, REST APIs, and responsive design.",
+    tech: "React.js, Node.js, Express.js, MongoDB",
+    link: "https://github.com/Shalini-576-cse"
+  },
+  {
+    title: "Email Spam Detection",
+    description:
+      "Machine learning application that classifies emails as spam or non-spam using Scikit-Learn.",
+    tech: "Python, Scikit-Learn",
+    link: "https://github.com/Shalini-576-cse"
   }
 ];
+
 let portfolioInitialized = false;
 
 function initPortfolio() {
-  if (portfolioInitialized) {
-    return;
-  }
+  if (portfolioInitialized) return;
 
   portfolioInitialized = true;
+
   startTypingEffect();
   setupScrollReveal();
   setupContactForm();
@@ -28,26 +45,24 @@ if (document.readyState === "loading") {
 
 function startTypingEffect() {
   const heroSubtitle = document.querySelector(".hero-content p");
-  const text = "Full Stack Developer | Building Modern Web Apps";
-  let index = 0;
+  const text =
+    "Full Stack Developer | Building Modern Web Applications";
 
-  if (!heroSubtitle) {
-    return;
-  }
+  if (!heroSubtitle) return;
 
   heroSubtitle.textContent = "";
 
-  function typeNextCharacter() {
-    if (index >= text.length) {
-      return;
-    }
+  let index = 0;
 
-    heroSubtitle.textContent += text.charAt(index);
-    index += 1;
-    window.setTimeout(typeNextCharacter, 60);
+  function type() {
+    if (index < text.length) {
+      heroSubtitle.textContent += text.charAt(index);
+      index++;
+      setTimeout(type, 50);
+    }
   }
 
-  typeNextCharacter();
+  type();
 }
 
 function setupScrollReveal() {
@@ -69,8 +84,6 @@ function setupScrollReveal() {
         observer.unobserve(entry.target);
       }
     });
-  }, {
-    threshold: 0.15
   });
 
   cards.forEach(card => observer.observe(card));
@@ -78,185 +91,108 @@ function setupScrollReveal() {
 
 function setupContactForm() {
   const form = document.getElementById("contactForm");
-  const submitButton = form?.querySelector("button");
 
-  if (!form || !submitButton) {
-    return;
-  }
+  if (!form) return;
 
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
+  const submitButton = form.querySelector("button");
 
-    const formData = new FormData(form);
-    const data = {
-      name: String(formData.get("name") || "").trim(),
-      email: String(formData.get("email") || "").trim(),
-      message: String(formData.get("message") || "").trim()
-    };
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
 
-    const validationMessage = validateContactData(data);
-
-    if (validationMessage) {
-      setStatus(validationMessage, "error");
-      return;
-    }
-
-    setStatus("Sending...", "info");
     submitButton.disabled = true;
 
+    const data = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      message: form.message.value.trim()
+    };
+
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
       });
-      const result = await parseJsonResponse(response);
 
-      if (response.ok && result.success) {
+      const result = await response.json();
+
+      if (response.ok) {
         setStatus("Message sent successfully!", "success");
         form.reset();
       } else {
         setStatus(result.message || "Failed to send message.", "error");
       }
-    } catch (error) {
-      setStatus("Unable to send message right now.", "error");
-    } finally {
-      submitButton.disabled = false;
+    } catch (err) {
+      setStatus("Unable to connect to server.", "error");
     }
+
+    submitButton.disabled = false;
   });
-}
-
-function validateContactData(data) {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!data.name || !data.email || !data.message) {
-    return "Please fill in all fields.";
-  }
-
-  if (data.name.length > 80 || data.email.length > 120 || data.message.length > 1000) {
-    return "Please shorten your contact details.";
-  }
-
-  if (!emailPattern.test(data.email)) {
-    return "Please enter a valid email address.";
-  }
-
-  return "";
-}
-
-async function loadProjects() {
-  const container = document.getElementById("projectsContainer");
-
-  if (!container) {
-    return;
-  }
-
-  renderProjectsMessage(container, "Loading projects...");
-
-  try {
-    const response = await fetch("/api/projects");
-    const projects = await parseJsonResponse(response);
-
-    if (!response.ok || !Array.isArray(projects)) {
-      throw new Error("Failed to load projects");
-    }
-
-    renderProjects(container, projects.length ? projects : FALLBACK_PROJECTS);
-  } catch (error) {
-    renderProjectsMessage(container, "Showing featured projects while live projects load.");
-    renderProjects(container, FALLBACK_PROJECTS);
-  }
-}
-
-async function parseJsonResponse(response) {
-  const contentType = response.headers.get("content-type") || "";
-
-  if (!contentType.includes("application/json")) {
-    return {};
-  }
-
-  return response.json();
-}
-
-function renderProjects(container, projects) {
-  const projectCards = projects
-    .filter(project => project && typeof project === "object")
-    .map(createProjectCard);
-
-  if (!projectCards.length) {
-    renderProjects(container, FALLBACK_PROJECTS);
-    return;
-  }
-
-  container.replaceChildren(...projectCards);
-}
-
-function renderProjectsMessage(container, message) {
-  const status = document.createElement("p");
-  status.className = "projects-status";
-  status.textContent = message;
-  container.replaceChildren(status);
 }
 
 function setStatus(message, type) {
   const status = document.getElementById("status");
 
-  if (!status) {
-    return;
-  }
+  if (!status) return;
 
   status.textContent = message;
   status.className = `status ${type}`;
 }
 
-function createProjectCard(project) {
-  const projectBox = document.createElement("div");
-  const title = document.createElement("h3");
-  const description = document.createElement("p");
-  const tech = document.createElement("p");
-  const techLabel = document.createElement("strong");
-  const titleText = getCleanText(project.title, "Untitled Project");
-  const descriptionText = getCleanText(project.description, "Project details coming soon.");
-  const techText = getCleanText(project.tech, "Not specified");
+async function loadProjects() {
+  const container = document.getElementById("projectsContainer");
 
-  projectBox.className = "project-box";
-  title.textContent = titleText;
-  description.textContent = descriptionText;
-  techLabel.textContent = "Tech:";
-  tech.append(techLabel, ` ${techText}`);
+  if (!container) return;
 
-  projectBox.append(title, description, tech);
-
-  if (isSafeProjectLink(project.link)) {
-    const link = document.createElement("a");
-    link.href = project.link;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = "View Project";
-    projectBox.appendChild(link);
-  }
-
-  return projectBox;
-}
-
-function getCleanText(value, fallback) {
-  const text = typeof value === "string" ? value.trim() : "";
-  return text || fallback;
-}
-
-function isSafeProjectLink(link) {
-  const trimmedLink = typeof link === "string" ? link.trim() : "";
-
-  if (!trimmedLink || trimmedLink === "#") {
-    return false;
-  }
+  container.innerHTML =
+    "<p class='projects-status'>Loading Projects...</p>";
 
   try {
-    const url = new URL(trimmedLink);
-    return url.protocol === "http:" || url.protocol === "https:";
+    const response = await fetch(`${API_URL}/api/projects`);
+
+    const projects = await response.json();
+
+    if (!response.ok) throw new Error();
+
+    renderProjects(container, projects.length ? projects : FALLBACK_PROJECTS);
+
   } catch (error) {
-    return false;
+
+    renderProjects(container, FALLBACK_PROJECTS);
+
   }
+}
+
+function renderProjects(container, projects) {
+
+  container.innerHTML = "";
+
+  projects.forEach(project => {
+
+    const card = document.createElement("div");
+
+    card.className = "project-card";
+
+    card.innerHTML = `
+      <h3>${project.title}</h3>
+
+      <p>${project.description}</p>
+
+      <h4>Tech Stack</h4>
+
+      <p>${project.tech}</p>
+
+      ${
+        project.link
+          ? `<a href="${project.link}" target="_blank" class="project-btn">View Project</a>`
+          : ""
+      }
+    `;
+
+    container.appendChild(card);
+
+  });
+
 }
