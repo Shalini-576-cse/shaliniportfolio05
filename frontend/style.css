@@ -119,25 +119,28 @@ nav a:hover{
 .side-left,
 .side-right{
     position:absolute;
-    z-index:0;
+    z-index:1;
     opacity:1;
+    pointer-events:none; /* Images won't block clicks */
 }
 
 .side-left{
-    left:-200px;
-    top:80px;
+    left:-180px;
+    top:120px;
 }
 
 .side-right{
-    right:-200px;
-    top:90px;
+    right:-180px;
+    top:120px;
 }
 
 .side-left img,
 .side-right img{
-    width:320px;
+    width:300px;
     height:auto;
     display:block;
+    animation:none;
+    transform:none;
 }
 
 /* =========================
